@@ -52,7 +52,7 @@ if page == 'Mapa':
 					"ScatterplotLayer",
 					df,
 					get_position=['lon', 'lat'],
-					get_fill_color='[0, 255, 0, 160]',
+					get_color='Color',
 					get_radius=30
 				),
 				]
