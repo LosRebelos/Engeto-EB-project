@@ -62,39 +62,22 @@ if page == 'Mapa':
 				pitch=50
 			),
 			layers = [
-				#pdk.Layer(
-				#	"ScatterplotLayer",
-				#	df_bikes_active,
-				#	get_position=['lon', 'lat'],
-				#	get_fill_color=[124, 252, 0],
-				#	get_line_color=[124, 252, 0],
-				#	get_radius=30
-				#),
-				#pdk.Layer(
-				#	"ScatterplotLayer",
-				#	df_bikes_noactive,
-				#	get_position=['lon', 'lat'],
-				#	get_fill_color=[255, 0, 0],
-				#	get_line_color=[255, 0, 0],
-				#	get_radius=30
-				#),
 				pdk.Layer(
-					'HexagonLayer',
-					data=df_bikes_active,
-					get_position='[lon, lat]',
-					radius=200,
-					elevation_scale=4,
-					elevation_range=[0, 1000],
-					pickable=True,
-					extruded=True,
+					"ScatterplotLayer",
+					df_bikes_active,
+					get_position=['lon', 'lat'],
+					get_fill_color=[124, 252, 0, 500],
+					get_line_color=[124, 252, 0, 500],
+					get_radius=30
 				),
 				pdk.Layer(
-					'ScatterplotLayer',
-					data=df_bikes_active,
-					get_position='[lon, lat]',
-					get_color='[200, 30, 0, 160]',
-					get_radius=200,
-				)
+					"ScatterplotLayer",
+					df_bikes_noactive,
+					get_position=['lon', 'lat'],
+					get_fill_color=[255, 0, 0, 160],
+					get_line_color=[255, 0, 0, 160],
+					get_radius=30
+				),
 				]
 		)
 	)
