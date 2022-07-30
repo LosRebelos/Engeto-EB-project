@@ -26,8 +26,8 @@ FROM base;'''
 
 df.loc[df['number_of_rents'] > 200, 'Status'] = 'Active'
 df.loc[df['number_of_rents'] <= 200, 'Status'] = 'Inactive'
-df.loc[df['Status'] == 'Active', 'Color'] = '[0, 255, 0, 160]'
-df.loc[df['Status'] == 'Inactive', 'Color'] = '[255, 0, 0, 160]'
+df.loc[df['Status'] == 'Active', 'Color'] = '0, 255, 0, 160'
+df.loc[df['Status'] == 'Inactive', 'Color'] = '255, 0, 0, 160'
 
 st.set_page_config(layout="wide")
 st.title('Edinburgh bikes project')
@@ -52,7 +52,7 @@ def usage_map():
 						"ScatterplotLayer",
 						df,
 						get_position=['lon', 'lat'],
-						get_color='Color',
+						get_color=['Color'],
 						get_radius=30
 					),
 					]
