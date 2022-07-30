@@ -26,8 +26,8 @@ FROM base;'''
 
 df.loc[df['number_of_rents'] > 200, 'Status'] = 'Active'
 df.loc[df['number_of_rents'] <= 200, 'Status'] = 'Inactive'
-df.loc[df['Status'] == 'Active', 'Color'] = [124, 252, 0, 160]
-df.loc[df['Status'] == 'Inactive', 'Color'] = [255, 0, 0, 160]
+df.loc[df['Status'] == 'Active', 'Color'] = 'green'
+df.loc[df['Status'] == 'Inactive', 'Color'] = 'red'
 
 
 
@@ -54,8 +54,7 @@ def usage_map():
 						"ScatterplotLayer",
 						df,
 						get_position=['lon', 'lat'],
-						get_fill_color='color',
-						get_line_color=[124, 252, 0, 160],
+						get_fill_color='Color',
 						get_radius=30
 					),
 					]
