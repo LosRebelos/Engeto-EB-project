@@ -6,34 +6,72 @@ import streamlit as st
 import pydeck as pdk
 
 engine = create_engine("mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.engeto.com:3306/data_academy_04_2022")
-df_bikes = pd.read_sql(sql=
-'''SELECT
+df_bikes_active = pd.read_sql(sql=
+'''WITH base AS (
+	SELECT
+		start_station_name,
+		start_station_latitude as lat,
+		start_station_longitude as lon,
+		COUNT(*) AS number_of_rents
+	FROM edinburgh_bikes eb
+	GROUP BY start_station_name
+)
+SELECT
 	start_station_name,
-	start_station_latitude as lat,
-	start_station_longitude as lon
-FROM edinburgh_bikes eb
-GROUP BY start_station_name
-ORDER BY COUNT(*) DESC;'''
+	lat,
+	lon,
+	number_of_rents
+FROM base
+WHERE number_of_rents > 500;'''
+, con=engine)
+
+df_bikes_noactive = pd.read_sql(sql=
+'''WITH base AS (
+	SELECT
+		start_station_name,
+		start_station_latitude as lat,
+		start_station_longitude as lon,
+		COUNT(*) AS number_of_rents
+	FROM edinburgh_bikes eb
+	GROUP BY start_station_name
+)
+SELECT
+	start_station_name,
+	lat,
+	lon,
+	number_of_rents
+FROM base
+WHERE number_of_rents <= 500;'''
 , con=engine)
 
 st.pydeck_chart(
     pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
         initial_view_state=pdk.ViewState(
-            latitude=55.95233546161639,
-            longitude=-3.207101172107286,
+            latitude=55.9533,
+            longitude=-3.1883,
             zoom=12,
             pitch=50
         ),
         layers = [
             pdk.Layer(
                 "ScatterplotLayer",
-                df_bikes,
+                df_bikes_active,
                 get_position=['lon', 'lat'],
                 get_fill_color=[124, 252, 0],
                 get_line_color=[124, 252, 0],
-                get_radius=25
+                get_radius=30
+            ),
+			pdk.Layer(
+                "ScatterplotLayer",
+                df_bikes_noactive,
+                get_position=['lon', 'lat'],
+                get_fill_color=[255, 0, 0],
+                get_line_color=[255, 0, 0],
+                get_radius=30
             )
         ]
     )
 )
+
+
