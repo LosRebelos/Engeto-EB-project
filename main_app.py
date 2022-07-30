@@ -20,10 +20,10 @@ st.pydeck_chart(
     pdk.Deck(
         map_style='mapbox://styles/mapbox/light-v9',
         initial_view_state=pdk.ViewState(
-            latitude=-17,
-            longitude=-65,
-            zoom=4,
-            pitch=50
+            latitude= 3,
+            longitude= 55,
+            zoom=10,
+            pitch=10
         ),
         layers = [
             pdk.Layer(
@@ -32,7 +32,7 @@ st.pydeck_chart(
                 get_position=['lon', 'lat'],
                 get_fill_color=['r', 'g', 'b'],
                 get_line_color=[0, 0, 0],
-                get_radius=100000
+                get_radius=10
             )
         ]
     )
