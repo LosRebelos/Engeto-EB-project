@@ -22,7 +22,7 @@ st.pydeck_chart(
         initial_view_state=pdk.ViewState(
             latitude= 55.95233546161639,
             longitude= -3.207101172107286,
-            zoom=10,
+            zoom=100,
             pitch=50
         ),
         layers = [
@@ -32,7 +32,7 @@ st.pydeck_chart(
                 get_position=['lon', 'lat'],
                 get_fill_color=[124, 252, 0],
                 get_line_color=[124, 252, 0],
-                get_radius= 10
+                get_radius= 25
             )
         ]
     )
