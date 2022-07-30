@@ -47,7 +47,7 @@ WHERE number_of_rents <= 200;'''
 st.set_page_config(layout="wide")
 st.title('Edinburgh bikes project')
 
-page = st.sidebar.radio('Select page', ['Mapa','Next','Covid'])
+page = st.sidebar.radio('Select page', ['Mapa',['Next','Covid']])
 
 
 if page == 'Mapa':
