@@ -34,30 +34,27 @@ st.title('Edinburgh bikes project')
 
 page = st.sidebar.radio('Select page', ['Mapa','Next','Covid'])
 
-def usage_map():
-	if page == 'Mapa':
-		st.header('Mapa používání sdílenych kol v Edinburgu')
 
-		st.pydeck_chart(
-			pdk.Deck(
-				map_style='mapbox://styles/mapbox/light-v9',
-				initial_view_state=pdk.ViewState(
-					latitude=55.9533,
-					longitude=-3.1883,
-					zoom=12,
-					pitch=50
+if page == 'Mapa':
+	st.header('Mapa používání sdílenych kol v Edinburgu')
+
+	st.pydeck_chart(
+		pdk.Deck(
+			map_style='mapbox://styles/mapbox/light-v9',
+			initial_view_state=pdk.ViewState(
+				latitude=55.9533,
+				longitude=-3.1883,
+				zoom=12,
+				pitch=50
+			),
+			layers = [
+				pdk.Layer(
+					"ScatterplotLayer",
+					df,
+					get_position=['lon', 'lat'],
+					get_fill_color='Color',
+					get_radius=30
 				),
-				layers = [
-					pdk.Layer(
-						"ScatterplotLayer",
-						df,
-						get_position=['lon', 'lat'],
-						get_fill_color=['Color'],
-						get_radius=30
-					),
-					]
-			)
+				]
 		)
-usage_map()
-
-
+	)
