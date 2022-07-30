@@ -31,8 +31,8 @@ st.pydeck_chart(
                 df_bikes,
                 get_position=['lon', 'lat'],
                 get_fill_color=['r', 'g', 'b'],
-                get_line_color=[124,252,0],
-                get_radius=100
+                get_line_color=[124, 252, 0],
+                get_radius= 50
             )
         ]
     )
