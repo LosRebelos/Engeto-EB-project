@@ -49,37 +49,39 @@ st.title('Edinburgh bikes project')
 
 page = st.sidebar.radio('Select page', ['Mapa','Next','Covid'])
 
-if page == 'Mapa':
-	st.header('Mapa používání sdílenych kol v Edinburgu')
+def usage_map():
+	if page == 'Mapa':
+		st.header('Mapa používání sdílenych kol v Edinburgu')
 
-	st.pydeck_chart(
-		pdk.Deck(
-			map_style='mapbox://styles/mapbox/light-v9',
-			initial_view_state=pdk.ViewState(
-				latitude=55.9533,
-				longitude=-3.1883,
-				zoom=12,
-				pitch=50
-			),
-			layers = [
-				pdk.Layer(
-					"ScatterplotLayer",
-					df_bikes_active,
-					get_position=['lon', 'lat'],
-					get_fill_color=[124, 252, 0, 500],
-					get_line_color=[124, 252, 0, 500],
-					get_radius=30
+		st.pydeck_chart(
+			pdk.Deck(
+				map_style='mapbox://styles/mapbox/light-v9',
+				initial_view_state=pdk.ViewState(
+					latitude=55.9533,
+					longitude=-3.1883,
+					zoom=12,
+					pitch=50
 				),
-				pdk.Layer(
-					"ScatterplotLayer",
-					df_bikes_noactive,
-					get_position=['lon', 'lat'],
-					get_fill_color=[255, 0, 0, 160],
-					get_line_color=[255, 0, 0, 160],
-					get_radius=30
-				),
-				]
+				layers = [
+					pdk.Layer(
+						"ScatterplotLayer",
+						df_bikes_active,
+						get_position=['lon', 'lat'],
+						get_fill_color=[124, 252, 0, 160],
+						get_line_color=[124, 252, 0, 160],
+						get_radius=30
+					),
+					pdk.Layer(
+						"ScatterplotLayer",
+						df_bikes_noactive,
+						get_position=['lon', 'lat'],
+						get_fill_color=[255, 0, 0, 160],
+						get_line_color=[255, 0, 0, 160],
+						get_radius=30
+					),
+					]
+			)
 		)
-	)
+usage_map()
 
 
