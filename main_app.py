@@ -53,7 +53,7 @@ def usage_map():
 						"ScatterplotLayer",
 						df,
 						get_position=['lon', 'lat'],
-						get_fill_color= '#FF0000',
+						get_fill_color='[255, 0, 0, 160]',
 						get_radius=30
 					),
 					]
