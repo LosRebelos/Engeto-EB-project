@@ -6,7 +6,7 @@ import streamlit as st
 import pydeck as pdk
 
 engine = create_engine("mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.engeto.com:3306/data_academy_04_2022")
-df_bikes_active = pd.read_sql(sql=
+df = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
 		start_station_name,
@@ -21,28 +21,15 @@ SELECT
 	lat,
 	lon,
 	number_of_rents
-FROM base
-WHERE number_of_rents > 200;'''
+FROM base;'''
 , con=engine)
 
-df_bikes_noactive = pd.read_sql(sql=
-'''WITH base AS (
-	SELECT
-		start_station_name,
-		start_station_latitude as lat,
-		start_station_longitude as lon,
-		COUNT(*) AS number_of_rents
-	FROM edinburgh_bikes eb
-	GROUP BY start_station_name
-)
-SELECT
-	start_station_name,
-	lat,
-	lon,
-	number_of_rents
-FROM base
-WHERE number_of_rents <= 200;'''
-, con=engine)
+df.loc[df['number_of_rents'] > 200, 'Status'] = 'Active'
+df.loc[df['number_of_rents'] <= 200, 'Status'] = 'Inactive'
+df.loc[df['Status'] == 'Active', 'Color'] = [124, 252, 0, 160]
+df.loc[df['Status'] == 'Inactive', 'Color'] = [255, 0, 0, 160]
+
+
 
 st.set_page_config(layout="wide")
 st.title('Edinburgh bikes project')
@@ -65,18 +52,10 @@ def usage_map():
 				layers = [
 					pdk.Layer(
 						"ScatterplotLayer",
-						df_bikes_active,
+						df,
 						get_position=['lon', 'lat'],
-						get_fill_color=[124, 252, 0, 160],
+						get_fill_color='color',
 						get_line_color=[124, 252, 0, 160],
-						get_radius=30
-					),
-					pdk.Layer(
-						"ScatterplotLayer",
-						df_bikes_noactive,
-						get_position=['lon', 'lat'],
-						get_fill_color=[255, 0, 0, 160],
-						get_line_color=[255, 0, 0, 160],
 						get_radius=30
 					),
 					]
