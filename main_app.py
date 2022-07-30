@@ -32,7 +32,7 @@ st.pydeck_chart(
                 get_position=['lon', 'lat'],
                 get_fill_color=[124, 252, 0],
                 get_line_color=[124, 252, 0],
-                get_radius=25
+                get_radius=10
             )
         ]
     )
