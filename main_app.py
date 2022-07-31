@@ -20,6 +20,7 @@ page = st.sidebar.radio('Select page', ['Map'])
 if page == 'Map':
 	st.header('Shared bikes in Endiburg')
 	col1, col2, col3 = st.columns(3)
+	col11 = st.columns(1)
 
 	with col1:
 		button1 = st.button('Station activity')
@@ -110,6 +111,8 @@ WHERE number_of_rents <= 200;'''
 			)
 		)
 	if button2:
+		limit_adjust = col11.slider('Limit: ', min_value=5, max_value=30, value=5)
+
 		df_bikes_frequency = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
@@ -127,7 +130,7 @@ SELECT
 	number_of_rents
 FROM base
 ORDER BY number_of_rents DESC
-LIMIT 10;'''
+LIMIT {};'''.format(limit_adjust)
 , con=engine)
 
 		st.pydeck_chart(
@@ -152,12 +155,9 @@ LIMIT 10;'''
 						opacity=0.8,
 						stroked=True,
 						filled=True,
-						radius_scale=1,
-						radius_min_pixels=1,
-						radius_max_pixels=50,
 						get_position=['lon', 'lat'],
 						get_fill_color=[255, 128, 0, 160],
-						get_radius='number_of_rents'
+						get_radius=30
 					),
 				]
 			)
