@@ -128,10 +128,10 @@ LIMIT 10;'''
 			pdk.Deck(
 				map_style='mapbox://styles/mapbox/light-v9',
 				initial_view_state=pdk.ViewState(
-				latitude=37.76,
-				longitude=-122.4,
-				zoom=11,
-				pitch=50,
+				latitude=55.9533,
+				longitude=-3.1883,
+				zoom=12,
+				pitch=50
      	),
      	layers=[
          	pdk.Layer(
@@ -139,8 +139,8 @@ LIMIT 10;'''
 				data=df_bikes_frequency,
 				get_position='[lon, lat]',
 				radius=200,
-				elevation_scale=4,
-				elevation_range=[0, 1000],
+				elevation_scale=1,
+				elevation_range=[0, 15000],
 				pickable=True,
 				extruded=True,
 				),
