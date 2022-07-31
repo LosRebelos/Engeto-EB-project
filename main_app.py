@@ -156,7 +156,6 @@ LIMIT 10;'''
 						radius_max_pixels=100,
 						get_position=['lon', 'lat'],
 						get_fill_color=[255, 128, 0, 160],
-						get_radius=30
 					),
 				]
 			)
