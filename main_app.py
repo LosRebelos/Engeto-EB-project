@@ -18,7 +18,18 @@ page = st.sidebar.radio('Select page', ['Mapa'])
 
 if page == 'Mapa':
 	st.header('Sdílená kola v Endiburgu')
-	if st.button('Aktivita stanic'):
+	col1, col2, col3 = st.columns(3)
+
+	with col1:
+		button1 = st.button('Button 1')
+
+	with col2:
+		button2 = st.button('Button 2')
+
+	with col3:
+		button3 = st.button('Button 3')
+
+	if button1('Aktivita stanic'):
 		df_bikes_active = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
@@ -92,5 +103,5 @@ WHERE number_of_rents <= 200;'''
 					]
 			)
 		)
-	if st.button('Nejfrekventovanější stanice'):
+	if button2('Nejfrekventovanější stanice'):
 		pass
