@@ -6,7 +6,7 @@ import streamlit as st
 import pydeck as pdk
 import math
 
-engine = create_engine("mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.engeto.com:3306/data_academy_04_2022")
+engine = create_engine('mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.engeto.com:3306/data_academy_04_2022')
 
 
 
@@ -14,10 +14,10 @@ engine = create_engine("mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.enget
 st.set_page_config(layout="wide")
 st.title('Edinburgh bikes project')
 
-page = st.sidebar.radio('Select page', ['Mapa'])
+page = st.sidebar.radio('Select page', ['Map'])
 
 
-if page == 'Mapa':
+if page == 'Map':
 	st.header('Shared bikes in Endiburg')
 	col1, col2, col3 = st.columns(3)
 
@@ -78,12 +78,12 @@ WHERE number_of_rents <= 200;'''
 					zoom=12,
 					pitch=50
 				),
-				tooltip= {"html": 	"{start_station_name} </br>"
-									"<b>Number of rentals:</b>{number_of_rents} </br>"
+				tooltip= {'html': 	'{start_station_name} </br>'
+									'Number of rentals: {number_of_rents} </br>'
 				},
 				layers = [
 					pdk.Layer(
-						"ScatterplotLayer",
+						'ScatterplotLayer',
 						df_bikes_active,
 						pickable=True,
 						auto_highlight=True,
@@ -95,7 +95,7 @@ WHERE number_of_rents <= 200;'''
 						get_radius=30
 					),
 					pdk.Layer(
-						"ScatterplotLayer",
+						'ScatterplotLayer',
 						df_bikes_inactive,
 						pickable=True,
 						auto_highlight=True,
@@ -139,12 +139,12 @@ LIMIT 10;'''
 					zoom=12,
 					pitch=50
 				),
-				tooltip= {"html": 	"{start_station_name} </br>"
-									"<b>Number of rentals:</b>{number_of_rents} </br>"
+				tooltip= {'html': 	'{start_station_name} </br>'
+									'Number of rentals: {number_of_rents} </br>'
 				},
 				layers = [
 					pdk.Layer(
-						"ScatterplotLayer",
+						'ScatterplotLayer',
 						df_bikes_frequency,
 						pickable=True,
 						auto_highlight=True,
@@ -155,6 +155,17 @@ LIMIT 10;'''
 						get_fill_color=[255, 128, 0, 160],
 						get_radius=30
 					),
+					 pdk.Layer(
+						'HexagonLayer',
+						data=df_bikes_frequency,
+						get_position='[lon, lat]',
+						radius=200,
+						elevation_scale=4,
+						elevation_range=[0, 1000],
+						pickable=True,
+						auto_highlight=True,
+						extruded=True
+					)	
 				]
 			)
 		)
