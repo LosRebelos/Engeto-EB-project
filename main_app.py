@@ -68,7 +68,7 @@ SELECT
 FROM base
 WHERE number_of_rents <= 200;'''
 , con=engine)
-
+	
 		st.pydeck_chart(
 			pdk.Deck(
 				map_style='mapbox://styles/mapbox/light-v9',
@@ -78,6 +78,9 @@ WHERE number_of_rents <= 200;'''
 					zoom=12,
 					pitch=50
 				),
+				tooltip= {"html": 	"{start_station_name} </br>"
+									"{number_of_rents} </br>"
+				},
 				layers = [
 					pdk.Layer(
 						"ScatterplotLayer",
@@ -134,7 +137,9 @@ LIMIT 10;'''
 					zoom=12,
 					pitch=50
 				),
-				tooltip= {"html": "{start_station_name}"},
+				tooltip= {"html": 	"{start_station_name} </br>"
+									"{number_of_rents} </br>"
+				},
 				layers = [
 					pdk.Layer(
 						"ScatterplotLayer",
@@ -145,7 +150,7 @@ LIMIT 10;'''
 						stroked=True,
 						filled=True,
 						get_position=['lon', 'lat'],
-						get_fill_color=[0, 0, 0, 160],
+						get_fill_color=[255, 128, 0, 160],
 						get_radius=30
 					),
 				]
