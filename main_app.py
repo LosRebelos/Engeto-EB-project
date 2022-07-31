@@ -110,30 +110,30 @@ WHERE number_of_rents <= 200;'''
 			)
 		)
 	if button2:
-		limit = st.slider('Limit', min_value=5, max_value=30, value=5)
-		limit.write('Limit je: {}'.format(limit))
+		col21 = st.columns(1)
+		limit = col21.slider('Limit', min_value=5, max_value=30, value=5)
+		col21.write('Limit je: {}'.format(limit))
 
-		df_bikes_frequency = pd.read_sql(sql=
-'''WITH base AS (
-	SELECT
-		start_station_name,
-		start_station_latitude as lat,
-		start_station_longitude as lon,
-		COUNT(*) AS number_of_rents
-	FROM edinburgh_bikes eb
-	GROUP BY start_station_name
-)
-SELECT
-	start_station_name,
-	lat,
-	lon,
-	number_of_rents
-FROM base
-ORDER BY number_of_rents DESC
-LIMIT {}'''.format(limit)
-, con=engine)
+		querry_frequency = '''WITH base AS (
+								SELECT
+									start_station_name,
+									start_station_latitude as lat,
+									start_station_longitude as lon,
+									COUNT(*) AS number_of_rents
+								FROM edinburgh_bikes eb
+								GROUP BY start_station_name
+							)
+							SELECT
+								start_station_name,
+								lat,
+								lon,
+								number_of_rents
+							FROM base
+							ORDER BY number_of_rents DESC
+							LIMIT {}'''.format(limit)
+		df_bikes_frequency = pd.read_sql(sql=querry_frequency, con=engine)
 
-		limit.pydeck_chart(
+		col21.pydeck_chart(
 			pdk.Deck(
 				map_style='mapbox://styles/mapbox/light-v9',
 				initial_view_state=pdk.ViewState(
