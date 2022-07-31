@@ -132,7 +132,7 @@ ORDER BY number_of_rents DESC
 LIMIT {}'''.format(limit)
 , con=engine)
 
-		st.pydeck_chart(
+		limit.pydeck_chart(
 			pdk.Deck(
 				map_style='mapbox://styles/mapbox/light-v9',
 				initial_view_state=pdk.ViewState(
