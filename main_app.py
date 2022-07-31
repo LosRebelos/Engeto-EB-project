@@ -135,14 +135,20 @@ LIMIT 10;'''
      	),
      	layers=[
          	pdk.Layer(
-				'HexagonLayer',
-				data=df_bikes_frequency,
-				get_position='[lon, lat]',
-				radius=200,
-				elevation_scale=1,
-				elevation_range=[0, 15000],
+				"ScatterplotLayer",
+				df_bikes_frequency,
 				pickable=True,
-				extruded=True,
+				opacity=0.8,
+				stroked=True,
+				filled=True,
+				radius_scale=6,
+				radius_min_pixels=1,
+				radius_max_pixels=100,
+				line_width_min_pixels=1,
+				get_position="coordinates",
+				get_radius="exits_radius",
+				get_fill_color=[255, 140, 0],
+				get_line_color=[0, 0, 0],
 				),
     			]
 			)
