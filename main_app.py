@@ -4,6 +4,7 @@ import pandas as pd
 import pymysql
 import streamlit as st
 import pydeck as pdk
+import math
 
 engine = create_engine("mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.engeto.com:3306/data_academy_04_2022")
 
@@ -124,17 +125,9 @@ ORDER BY number_of_rents DESC
 LIMIT 10;'''
 , con=engine)
 
-		st.pydeck_chart(
-			pdk.Deck(
-				map_style='mapbox://styles/mapbox/light-v9',
-				initial_view_state=pdk.ViewState(
-				latitude=55.9533,
-				longitude=-3.1883,
-				zoom=12,
-				pitch=50
-     	),
-     	layers=[
-         	pdk.Layer(
+		# Define a layer to display on a map
+		layer = [
+			pdk.Layer(
 				"ScatterplotLayer",
 				df_bikes_frequency,
 				pickable=True,
@@ -145,10 +138,21 @@ LIMIT 10;'''
 				radius_min_pixels=1,
 				radius_max_pixels=100,
 				line_width_min_pixels=1,
-				get_position=['lon', 'lat'],
+				get_position="coordinates",
+				get_radius="exits_radius",
 				get_fill_color=[255, 140, 0],
 				get_line_color=[0, 0, 0],
-				),
-    			]
 			)
-		)
+		]
+		# Set the viewport location
+		view_state = [
+			pdk.ViewState(
+					latitude=55.9533,
+					longitude=-3.1883,
+					zoom=12,
+					pitch=50
+			)
+		]	
+		# Render
+		r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{name}\n{number_of_rents}"})
+		r.to_html("scatterplot_layer.html")
