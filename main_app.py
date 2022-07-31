@@ -112,7 +112,7 @@ WHERE number_of_rents <= 200;'''
 	if button2:
 		col21 = st.columns(1)
 		limit = col1.slider('Limit', min_value=5, max_value=30, value=5)
-		col21.write(f'Limit je: {limit}')
+		col21.write('Limit je: {}'.format(limit))
 
 		df_bikes_frequency = pd.read_sql(sql=
 '''WITH base AS (
