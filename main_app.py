@@ -21,10 +21,10 @@ if page == 'Mapa':
 	col1, col2, col3 = st.columns(3)
 
 	with col1:
-		button1 = st.button('Button 1')
+		button1 = st.button('Aktivita stanic')
 
 	with col2:
-		button2 = st.button('Button 2')
+		button2 = st.button('Nejfrekventovanější stanice')
 
 	with col3:
 		button3 = st.button('Button 3')
@@ -104,4 +104,46 @@ WHERE number_of_rents <= 200;'''
 			)
 		)
 	if button2:
-		pass
+		df_bikes_frequency = pd.read_sql(sql=
+'''WITH base AS (
+	SELECT
+		start_station_name,
+		start_station_latitude as lat,
+		start_station_longitude as lon,
+		COUNT(*) AS number_of_rents
+	FROM edinburgh_bikes eb
+	GROUP BY start_station_name
+)
+SELECT
+	start_station_name,
+	lat,
+	lon,
+	number_of_rents
+FROM base
+ORDER BY number_of_renst
+LIMIT 10;'''
+, con=engine)
+
+		st.pydeck_chart(
+			pdk.Deck(
+				map_style='mapbox://styles/mapbox/light-v9',
+				initial_view_state=pdk.ViewState(
+				latitude=37.76,
+				longitude=-122.4,
+				zoom=11,
+				pitch=50,
+     	),
+     	layers=[
+         	pdk.Layer(
+				'HexagonLayer',
+				data=df_bikes_frequency,
+				get_position='[lon, lat]',
+				radius=200,
+				elevation_scale=4,
+				elevation_range=[0, 1000],
+				pickable=True,
+				extruded=True,
+				),
+    			]
+			)
+		)
