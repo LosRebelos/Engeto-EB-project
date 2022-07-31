@@ -6,7 +6,20 @@ import streamlit as st
 import pydeck as pdk
 
 engine = create_engine("mysql+pymysql://data-student:u9AB6hWGsNkNcRDm@data.engeto.com:3306/data_academy_04_2022")
-df_bikes_active = pd.read_sql(sql=
+
+
+
+
+st.set_page_config(layout="wide")
+st.title('Edinburgh bikes project')
+
+page = st.sidebar.radio('Select page', ['Mapa'])
+
+
+if page == 'Mapa':
+	st.header('Sdílená kola v Endiburgu')
+	if st.button('Aktivita stanic'):
+		df_bikes_active = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
 		start_station_name,
@@ -25,7 +38,7 @@ FROM base
 WHERE number_of_rents > 200;'''
 , con=engine)
 
-df_bikes_inactive = pd.read_sql(sql=
+		df_bikes_inactive = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
 		start_station_name,
@@ -44,15 +57,6 @@ FROM base
 WHERE number_of_rents <= 200;'''
 , con=engine)
 
-st.set_page_config(layout="wide")
-st.title('Edinburgh bikes project')
-
-page = st.sidebar.radio('Select page', ['Mapa'])
-
-
-if page == 'Mapa':
-	st.header('Mapa používání sdílenych kol v Edinburgu')
-	if st.button('Aktivní a neaktivní stanice'):
 		st.pydeck_chart(
 			pdk.Deck(
 				map_style='mapbox://styles/mapbox/light-v9',
@@ -88,3 +92,5 @@ if page == 'Mapa':
 					]
 			)
 		)
+	if st.button('Nejfrekventovanější stanice'):
+		pass
