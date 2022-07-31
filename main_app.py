@@ -30,6 +30,9 @@ if page == 'Map':
 
 	with col3:
 		button3 = st.button('Button 3')
+	
+	with col11:
+		button11 = st.slider('Limit: ', min_value=5, max_value=30, value=5)
 
 	if button1:
 		df_bikes_active = pd.read_sql(sql=
@@ -111,8 +114,6 @@ WHERE number_of_rents <= 200;'''
 			)
 		)
 	if button2:
-		limit_adjust = col11.slider('Limit: ', min_value=5, max_value=30, value=5)
-
 		df_bikes_frequency = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
@@ -130,7 +131,7 @@ SELECT
 	number_of_rents
 FROM base
 ORDER BY number_of_rents DESC
-LIMIT {};'''.format(limit_adjust)
+LIMIT {}'''.format(button11)
 , con=engine)
 
 		st.pydeck_chart(
