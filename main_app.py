@@ -120,7 +120,7 @@ SELECT
 	lon,
 	number_of_rents
 FROM base
-ORDER BY number_of_renst
+ORDER BY number_of_rents
 LIMIT 10;'''
 , con=engine)
 
