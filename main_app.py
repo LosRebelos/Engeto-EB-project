@@ -101,7 +101,7 @@ WHERE number_of_rents <= 200;'''
 						get_fill_color=[255, 0, 0, 160],
 						get_radius=30
 					),
-					]
+				]
 			)
 		)
 	if button2:
@@ -125,34 +125,28 @@ ORDER BY number_of_rents DESC
 LIMIT 10;'''
 , con=engine)
 
-		# Define a layer to display on a map
-		layer = [
-			pdk.Layer(
-				"ScatterplotLayer",
-				df_bikes_frequency,
-				pickable=True,
-				opacity=0.8,
-				stroked=True,
-				filled=True,
-				radius_scale=6,
-				radius_min_pixels=1,
-				radius_max_pixels=100,
-				line_width_min_pixels=1,
-				get_position="coordinates",
-				get_radius="exits_radius",
-				get_fill_color=[255, 140, 0],
-				get_line_color=[0, 0, 0],
-			)
-		]
-		# Set the viewport location
-		view_state = [
-			pdk.ViewState(
+		st.pydeck_chart(
+			pdk.Deck(
+				map_style='mapbox://styles/mapbox/light-v9',
+				initial_view_state=pdk.ViewState(
 					latitude=55.9533,
 					longitude=-3.1883,
 					zoom=12,
 					pitch=50
+				),
+				layers = [
+					pdk.Layer(
+						"ScatterplotLayer",
+						df_bikes_frequency,
+						pickable=True,
+						auto_highlight=True,
+						opacity=0.8,
+						stroked=True,
+						filled=True,
+						get_position=['lon', 'lat'],
+						get_fill_color=[0, 255, 0, 160],
+						get_radius=30
+					),
+				]
 			)
-		]	
-		# Render
-		r = pdk.Deck(layers=layer, initial_view_state=view_state, tooltip={"text": "{name}\n{number_of_rents}"})
-		r.to_html("scatterplot_layer.html")
+		)
