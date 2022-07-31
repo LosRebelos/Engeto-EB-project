@@ -20,7 +20,6 @@ page = st.sidebar.radio('Select page', ['Map'])
 if page == 'Map':
 	st.header('Shared bikes in Endiburg')
 	col1, col2, col3 = st.columns(3)
-	col11 = st.columns(1)
 
 	with col1:
 		button1 = st.button('Station activity')
@@ -31,9 +30,6 @@ if page == 'Map':
 	with col3:
 		button3 = st.button('Button 3')
 	
-	with col11:
-		button11 = st.slider('Limit: ', min_value=5, max_value=30, value=5)
-
 	if button1:
 		df_bikes_active = pd.read_sql(sql=
 '''WITH base AS (
@@ -114,6 +110,10 @@ WHERE number_of_rents <= 200;'''
 			)
 		)
 	if button2:
+		col21 = st.columns(1)
+		limit = col21.slider('Limit: ', min_value=5, max_value=30, value=5)
+		col21.write('Limit {}'.format(limit))
+		
 		df_bikes_frequency = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
