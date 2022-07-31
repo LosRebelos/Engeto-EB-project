@@ -137,6 +137,7 @@ LIMIT 10;'''
 					latitude=55.9533,
 					longitude=-3.1883,
 					zoom=12,
+					bearing=0,
 					pitch=50
 				),
 				tooltip= {'html': 	'{start_station_name} </br>'
