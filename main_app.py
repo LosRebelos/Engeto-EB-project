@@ -18,14 +18,14 @@ page = st.sidebar.radio('Select page', ['Mapa'])
 
 
 if page == 'Mapa':
-	st.header('Sdílená kola v Endiburgu')
+	st.header('Shared bikes in Endiburg')
 	col1, col2, col3 = st.columns(3)
 
 	with col1:
-		button1 = st.button('Aktivita stanic')
+		button1 = st.button('Station activity')
 
 	with col2:
-		button2 = st.button('Nejfrekventovanější stanice')
+		button2 = st.button('The most frequented station')
 
 	with col3:
 		button3 = st.button('Button 3')
@@ -79,13 +79,14 @@ WHERE number_of_rents <= 200;'''
 					pitch=50
 				),
 				tooltip= {"html": 	"{start_station_name} </br>"
-									"{number_of_rents} </br>"
+									"<b>Number of rentals:</b>{number_of_rents} </br>"
 				},
 				layers = [
 					pdk.Layer(
 						"ScatterplotLayer",
 						df_bikes_active,
 						pickable=True,
+						auto_highlight=True,
 						opacity=0.8,
 						stroked=True,
 						filled=True,
@@ -97,6 +98,7 @@ WHERE number_of_rents <= 200;'''
 						"ScatterplotLayer",
 						df_bikes_inactive,
 						pickable=True,
+						auto_highlight=True,
 						opacity=0.8,
 						stroked=True,
 						filled=True,
@@ -138,7 +140,7 @@ LIMIT 10;'''
 					pitch=50
 				),
 				tooltip= {"html": 	"{start_station_name} </br>"
-									"{number_of_rents} </br>"
+									"<b>Number of rentals:</b>{number_of_rents} </br>"
 				},
 				layers = [
 					pdk.Layer(
