@@ -29,7 +29,7 @@ if page == 'Mapa':
 	with col3:
 		button3 = st.button('Button 3')
 
-	if button1('Aktivita stanic'):
+	if button1:
 		df_bikes_active = pd.read_sql(sql=
 '''WITH base AS (
 	SELECT
@@ -103,5 +103,5 @@ WHERE number_of_rents <= 200;'''
 					]
 			)
 		)
-	if button2('Nejfrekventovanější stanice'):
+	if button2:
 		pass
