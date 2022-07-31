@@ -47,7 +47,7 @@ WHERE number_of_rents <= 200;'''
 st.set_page_config(layout="wide")
 st.title('Edinburgh bikes project')
 
-page = st.sidebar.radio('Select page', ['Mapa',['Next','Covid']])
+page = st.sidebar.radio('Select page', ['Mapa'])
 
 
 if page == 'Mapa':
@@ -66,6 +66,10 @@ if page == 'Mapa':
 				pdk.Layer(
 					"ScatterplotLayer",
 					df_bikes_active,
+					pickable=True,
+					opacity=0.8,
+					stroked=True,
+					filled=True,
 					get_position=['lon', 'lat'],
 					get_fill_color=[0, 255, 0, 160],
 					get_radius=30
@@ -73,6 +77,10 @@ if page == 'Mapa':
 				pdk.Layer(
 					"ScatterplotLayer",
 					df_bikes_inactive,
+					pickable=True,
+					opacity=0.8,
+					stroked=True,
+					filled=True,
 					get_position=['lon', 'lat'],
 					get_fill_color=[255, 0, 0, 160],
 					get_radius=30
