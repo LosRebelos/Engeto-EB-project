@@ -134,9 +134,10 @@ LIMIT 10;'''
 					zoom=12,
 					pitch=50
 				),
+				tooltip= {"html": "{start_station_name}"},
 				layers = [
 					pdk.Layer(
-						"ColumnLayer",
+						"ScatterplotLayer",
 						df_bikes_frequency,
 						pickable=True,
 						auto_highlight=True,
@@ -144,7 +145,7 @@ LIMIT 10;'''
 						stroked=True,
 						filled=True,
 						get_position=['lon', 'lat'],
-						get_fill_color=[0, 255, 0, 160],
+						get_fill_color=[0, 0, 0, 160],
 						get_radius=30
 					),
 				]
