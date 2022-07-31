@@ -110,7 +110,9 @@ WHERE number_of_rents <= 200;'''
 			)
 		)
 	if button2:
-		limit = st.slider('Limit: ', min_value=5, max_value=30, value=5)
+		col21 = st.columns(1)
+		limit = col1.slider('Limit', min_value=5, max_value=30, value=5)
+		col21.write(f'Limit je: {limit}')
 
 		df_bikes_frequency = pd.read_sql(sql=
 '''WITH base AS (
@@ -132,7 +134,7 @@ ORDER BY number_of_rents DESC
 LIMIT {}'''.format(limit)
 , con=engine)
 
-		limit.pydeck_chart(
+		col21.pydeck_chart(
 			pdk.Deck(
 				map_style='mapbox://styles/mapbox/light-v9',
 				initial_view_state=pdk.ViewState(
