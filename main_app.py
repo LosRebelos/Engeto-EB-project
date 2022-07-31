@@ -52,39 +52,39 @@ page = st.sidebar.radio('Select page', ['Mapa'])
 
 if page == 'Mapa':
 	st.header('Mapa používání sdílenych kol v Edinburgu')
-
-	st.pydeck_chart(
-		pdk.Deck(
-			map_style='mapbox://styles/mapbox/light-v9',
-			initial_view_state=pdk.ViewState(
-				latitude=55.9533,
-				longitude=-3.1883,
-				zoom=12,
-				pitch=50
-			),
-			layers = [
-				pdk.Layer(
-					"ScatterplotLayer",
-					df_bikes_active,
-					pickable=True,
-					opacity=0.8,
-					stroked=True,
-					filled=True,
-					get_position=['lon', 'lat'],
-					get_fill_color=[0, 255, 0, 160],
-					get_radius=30
+	if st.button('Aktivní a neaktivní stanice'):
+		st.pydeck_chart(
+			pdk.Deck(
+				map_style='mapbox://styles/mapbox/light-v9',
+				initial_view_state=pdk.ViewState(
+					latitude=55.9533,
+					longitude=-3.1883,
+					zoom=12,
+					pitch=50
 				),
-				pdk.Layer(
-					"ScatterplotLayer",
-					df_bikes_inactive,
-					pickable=True,
-					opacity=0.8,
-					stroked=True,
-					filled=True,
-					get_position=['lon', 'lat'],
-					get_fill_color=[255, 0, 0, 160],
-					get_radius=30
-				),
-				]
+				layers = [
+					pdk.Layer(
+						"ScatterplotLayer",
+						df_bikes_active,
+						pickable=True,
+						opacity=0.8,
+						stroked=True,
+						filled=True,
+						get_position=['lon', 'lat'],
+						get_fill_color=[0, 255, 0, 160],
+						get_radius=30
+					),
+					pdk.Layer(
+						"ScatterplotLayer",
+						df_bikes_inactive,
+						pickable=True,
+						opacity=0.8,
+						stroked=True,
+						filled=True,
+						get_position=['lon', 'lat'],
+						get_fill_color=[255, 0, 0, 160],
+						get_radius=30
+					),
+					]
+			)
 		)
-	)
