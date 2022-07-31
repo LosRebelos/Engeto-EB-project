@@ -151,9 +151,9 @@ LIMIT 10;'''
 						opacity=0.8,
 						stroked=True,
 						filled=True,
-						radius_scale=6,
+						radius_scale=1,
 						radius_min_pixels=1,
-						radius_max_pixels=100,
+						radius_max_pixels=50,
 						get_position=['lon', 'lat'],
 						get_fill_color=[255, 128, 0, 160],
 						get_radius='number_of_rents'
