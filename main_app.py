@@ -154,5 +154,5 @@ LIMIT 10;'''
 			)
 		]	
 		# Render
-		r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip={"text": "{name}\n{number_of_rents}"})
+		r = pdk.Deck(layers=layer, initial_view_state=view_state, tooltip={"text": "{name}\n{number_of_rents}"})
 		r.to_html("scatterplot_layer.html")
