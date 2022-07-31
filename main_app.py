@@ -136,7 +136,7 @@ LIMIT 10;'''
 				),
 				layers = [
 					pdk.Layer(
-						"ScatterplotLayer",
+						"ColumnLayer",
 						df_bikes_frequency,
 						pickable=True,
 						auto_highlight=True,
