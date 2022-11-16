@@ -1,5 +1,5 @@
-from calendar import week
 from sqlalchemy import create_engine
+from sklearn.metrics import DistanceMetric
 import geopy.distance as gd
 import pandas as pd
 import streamlit as st
@@ -7,6 +7,7 @@ import pydeck as pdk
 import numpy as np
 import datetime as dt
 import altair as alt
+import matplotlib.pyplot as plt
 
 ###############
 # DATAFRAME
@@ -23,7 +24,7 @@ df = pd.read_sql(sql=querry, con=engine)
 # ##############
 
 # ### 1 + 4 ###
-# Seznam stanic
+# List of stations
 def stations():
 	q_stations = '''SELECT 
 			start_station_name AS station_name,
@@ -46,17 +47,17 @@ def stations():
 	return df_stations
 
 # ### 2 ###
-# Celkový počet vypůjčených kol ve stanici
+# Total count of rented bikes
 def rents_counts():
 	rents = df['start_station_name'].value_counts().reset_index()
 	rents.columns = ['station_name', 'rents_count']
 	return rents
-# Nejfrekventovanější stanice
+# Most frequent stations
 def top_stations(limit):
 	return stations().sort_values(by=['rents_count'], ascending=False)[0:limit]
 
 # ### 3 ###
-# Celkový počet vrácených kol do stanice
+# Total count of returned bikes
 def return_counts():
 	returns = df['end_station_name'].value_counts().reset_index()
 	returns.columns = ['station_name', 'return_count']
@@ -64,13 +65,13 @@ def return_counts():
 
 
 # ### 5 ###
-# Průměrná doba výpůjčky za celou dobu
+# Average time for rent
 def avg_rent_duration():
 	df_dur = df[['started_at', 'duration']].copy()
 	avg_duration = df_dur['duration'].mean()
 	return avg_duration
 
-# Průměrná doba výpůjčky za měsíce
+# Average time for rent by months
 def month_avg_dur():
 	q_avg_dur = '''SELECT
 		date_format(started_at, '%%Y %%M') as date,
@@ -80,24 +81,35 @@ def month_avg_dur():
 	df_avg_dur = pd.read_sql(sql=q_avg_dur, con=engine)
 	return df_avg_dur
 
-# Odlehlé hodnoty z doby výpůjček --udělat posouvátko na 'value' třeba 30-xxx
+# Outlier values for bikes rents
 def outlier_dur(value):
 	outlier_value = value * avg_rent_duration()
 	df_outlier = df[df['duration'] > outlier_value]
 	return df_outlier
 
 
-# ### Analýza poptávky ###
-# vývoj poptávky po půjčování kol v čase --line chart 3 linky (roky)--
+# ### Demand analysis ###
+# Demand trend for rent bikes by month
 def month_rents():
-	q_m_rents = '''SELECT 
-		date_format(started_at, '%%Y') as Year,
-		date_format(started_at, '%%m') as Month,
-		count(start_station_name) 
-	FROM edinburgh_bikes eb
-	GROUP BY MONTH(started_at), YEAR(started_at);'''
+	# q_m_rents = '''SELECT 
+	# 	date_format(started_at, '%%Y') as Year,
+	# 	date_format(started_at, '%%m') as Month,
+	# 	count(start_station_name) 
+	# FROM edinburgh_bikes eb
+	# GROUP BY MONTH(started_at), YEAR(started_at);'''
+	# df_m_rents = pd.read_sql(sql=q_m_rents, con=engine)
+	# df_m_rents = df_m_rents.rename(columns={'count(start_station_name)': 'Rents count'})
+	q_m_rents = '''SELECT
+		started_at as date
+		FROM edinburgh_bikes eb
+		GROUP BY date;'''
 	df_m_rents = pd.read_sql(sql=q_m_rents, con=engine)
-	df_m_rents = df_m_rents.rename(columns={'count(start_station_name)': 'Rents count'})
+
+	df_m_rents['date'] = pd.to_datetime(df_m_rents['date'])
+	df_m_rents['date'] = df_m_rents['date'].apply(lambda x: x.strftime('%Y-%m'))
+	df_m_rents = df_m_rents.value_counts()
+	df_m_rents = df_m_rents.to_frame('count').reset_index()
+	df_m_rents = df_m_rents.sort_values(by=['date'])
 	return df_m_rents
 
 # identifikujte příčiny výkyvů poptávky + zjistěte vliv počasí na poptávku po kolech
@@ -107,41 +119,52 @@ def weather():
 	FROM edinburgh_weather ew;'''
 	df_weather = pd.read_sql(sql=querry_weather, con=engine)
 
-	#přejmenování sloupců
+	#Column rename
 	df_weather = df_weather.rename(columns={
-    'temp': 'temp[°C]', 
+    'temp': 'temp[°C]',
+	'feels': 'feels[°C]', 
     'rain': 'rain[mm]',
     'humidity': 'humidity[%]',
     'cloud': 'cloud[%]'}
     )
 
-	#odstranění sloupců
+	#Column drop
 	df_weather = df_weather.drop(columns= [
 	'wind',
-	'feels',
 	'gust',
 	'pressure',
 	'vis']
 	)
 
-	#odebraní jednotky, změna datového typu
+	#Change units, change data types
 	df_weather['temp[°C]'] = df_weather['temp[°C]'].str.replace(' °c', '').astype('int')
+	df_weather['feels[°C]'] = df_weather['feels[°C]'].str.replace(' °c', '').astype('int')
 	df_weather['rain[mm]'] = df_weather['rain[mm]'].str.replace(' mm', '').astype('float')
 	df_weather['humidity[%]'] = df_weather['humidity[%]'].str.replace('%', '').astype('int')
 	df_weather['cloud[%]'] = df_weather['cloud[%]'].str.replace('%', '').astype('int')
+	df['date'] = df['started_at'].str.split(' ', expand=True)[0]
 
-	df_weather = (df_weather[['date', 'temp[°C]', 'rain[mm]', 'humidity[%]', 'cloud[%]']]
+	df_weather = (df_weather[['date', 'temp[°C]', 'feels[°C]',  'rain[mm]', 'humidity[%]', 'cloud[%]']]
                            .groupby('date')
                            .mean()
                            .reset_index()
                            .round(2)
                            )
 
-	df['date'] = df['started_at'].str.split(' ', expand=True)[0]
 	df_weather = pd.merge(df, df_weather, left_on='date', right_on='date')
-	return df_weather
+	df_month_weather = df_weather.copy()
+	df_month_weather['date'] = pd.to_datetime(df_month_weather['date'])
+	df_month_weather = df_month_weather.set_index('date')
+	df_month_weather = (df_month_weather[['temp[°C]', 'feels[°C]',  'rain[mm]', 'humidity[%]', 'cloud[%]']]
+							.groupby(pd.Grouper(freq="M"))
+							.mean()
+							.reset_index()
+							.round(2)
+							)
+	df_month_weather['date'] = df_month_weather['date'].apply(lambda x: x.strftime('%Y-%m'))
+	return df_month_weather
 
-# půjčují si lidé kola více o víkendu než během pracovního týdne? --bar chart Mon-Sun
+# Do people rent bikes more at the weekend than during the work week?
 def weekday():
 	df_weekday = df['started_at']
 	df_weekday = pd.to_datetime(df_weekday)
@@ -174,6 +197,7 @@ page = st.sidebar.radio('Select page',
 if page == 'About':
 	st.title('Edinburgh bikes project')
 	st.header('Project author: Pepa Poskočil')
+	st.image('about_img.jpg')
 
 if page == 'Stations activity':
 	st.title('Stations activity')
@@ -335,8 +359,23 @@ if page == 'Bicycle flow':
 	st.write('Or you may find flow in this table')
 	st.dataframe(stations())
 
-if page == 'Distance between stations - NOT WORKING YET':
-	pass
+if page == 'Distance between stations':
+	st.title('Distance between station')
+	st.header('Distance matrix in metres')
+
+	df_distance_stations = stations()[['station_name', 'lat', 'lon']]
+	df_distance_stations['lat'] = np.radians(df_distance_stations['lat'])
+	df_distance_stations['lon'] = np.radians(df_distance_stations['lon'])
+
+	distance_metric = DistanceMetric.get_metric('haversine')
+	distances = pd.DataFrame(
+    	distance_metric.pairwise(
+        	df_distance_stations[['lat','lon']])*6373000, #calculation for meters  
+            	columns=df_distance_stations.station_name, 
+            	index=df_distance_stations.station_name).astype(int)
+
+	distances = distances.loc[:,~distances.columns.duplicated()]
+	st.dataframe(distances)
 
 if page == 'How long rent takes':
 	st.title('How long rent takes')
@@ -351,21 +390,66 @@ if page == 'How long rent takes':
 
 if page == 'Rents demand':
 	st.title('Rents demand')
-	st.header('Bar chart')
 
 	bar_chart = alt.Chart(month_rents()).mark_bar().encode(
-		alt.X('Month'),
-		alt.Y('Rents count'),
-		color = 'Year',
-		tooltip=['Year', 'Rents count']
+		alt.X('date'),
+		alt.Y('count'),
+		tooltip=['date', 'count']
 	)
 	st.altair_chart(bar_chart, use_container_width=True)
 
-	st.header('Demand table')
-	st.dataframe(month_rents())
+if page == 'The effect of weather on demand':
+	st.title('The effect of weather on demand')
+	st.header('Average value')
 
-if page == 'The effect of weather on demand - NOT WORKING YET':
-	pass
+	col1, col2, col3, col4, col5, col6 = st.columns([1, 1, 1, 1, 1, 3])
+
+	temp_val = str(int(weather()['temp[°C]'].mean().round(0))) + ' °C'
+	col1.metric('Temperature', temp_val)
+
+	feels_val = str(int(weather()['feels[°C]'].mean().round(0))) + ' °C'
+	col2.metric('Feels temperature', feels_val)
+
+	rain_val = str(weather()['rain[mm]'].mean().round(2)) + ' mm'
+	col3.metric('Rain', rain_val)
+
+	hum_val = str(int(weather()['humidity[%]'].mean().round(0))) + ' %'
+	col4.metric('Humidity', hum_val)
+
+	cloud_val = str(int(weather()['cloud[%]'].mean().round(0))) + ' %'
+	col5.metric('Cloud', cloud_val)
+
+	st.write('Moje povídání')
+
+	fig, axes = plt.subplots(5, 1, figsize=(20, 15))
+	plt.subplots_adjust(hspace = .01)
+
+	weather().plot('date', 'temp[°C]', ax=axes[0], 
+					color='blue', 
+					label='temperature [°C]')
+	weather().plot('date', 'feels[°C]', ax=axes[0], 
+					color='orange', 
+					label='Feels temperature [°C]')
+
+	weather().plot.bar('date', 'rain[mm]', ax=axes[1], 
+						ylabel='rain [mm]', 
+						label='rain [mm]')
+	
+	weather().plot('date', 'humidity[%]', ax=axes[2], 
+					color='blue', 
+					label='humidity [%]', 
+					ylabel='humidity [%]')
+
+	weather().plot('date', 'cloud[%]', ax=axes[3], 
+					color='blue', 
+					label='Cloud [%]', 
+					ylabel='Cloud [%]')
+
+	month_rents().plot.bar('date', 'count', ax=axes[4],
+						ylabel='Number of rents', 
+						label='Number of rents')
+
+	st.pyplot(fig)
 
 if page == 'Weekends or business days?':
 	st.title('Weekends or business days?')
@@ -377,5 +461,4 @@ if page == 'Weekends or business days?':
 		tooltip=['Day', 'Rents count']
 	)
 	st.altair_chart(bar_chart, use_container_width=True)
-
 
